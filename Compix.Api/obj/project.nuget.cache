@@ -1,0 +1,28 @@
+{
+  "version": 2,
+  "dgSpecHash": "wLvmQd92t8o=",
+  "success": false,
+  "projectFilePath": "C:\\Users\\gael1\\Documents\\TOPICOS_U1\\Proyecto final\\COMPIX\\Compix.Api\\Compix.Api.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\gael1\\.nuget\\packages\\dapper\\2.1.100\\dapper.2.1.100.nupkg.sha512",
+    "C:\\Users\\gael1\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.15\\microsoft.aspnetcore.openapi.10.0.15.nupkg.sha512",
+    "C:\\Users\\gael1\\.nuget\\packages\\microsoft.extensions.apidescription.server\\10.0.0\\microsoft.extensions.apidescription.server.10.0.0.nupkg.sha512",
+    "C:\\Users\\gael1\\.nuget\\packages\\swashbuckle.aspnetcore\\11.0.1\\swashbuckle.aspnetcore.11.0.1.nupkg.sha512",
+    "C:\\Users\\gael1\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\11.0.1\\swashbuckle.aspnetcore.swagger.11.0.1.nupkg.sha512",
+    "C:\\Users\\gael1\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\11.0.1\\swashbuckle.aspnetcore.swaggergen.11.0.1.nupkg.sha512",
+    "C:\\Users\\gael1\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\11.0.1\\swashbuckle.aspnetcore.swaggerui.11.0.1.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1107",
+      "level": "Error",
+      "message": "Se detectó un conflicto de versiones para Microsoft.OpenApi. Para resolver este problema, instale o haga referencia a Microsoft.OpenApi 3.11.0 directamente en el proyecto Compix.Api. \r\n Compix.Api -> Swashbuckle.AspNetCore 11.0.1 -> Swashbuckle.AspNetCore.Swagger 11.0.1 -> Microsoft.OpenApi (>= 3.11.0) \r\n Compix.Api -> Microsoft.AspNetCore.OpenApi 10.0.15 -> Microsoft.OpenApi (>= 2.13.0 && < 3.0.0).",
+      "projectPath": "C:\\Users\\gael1\\Documents\\TOPICOS_U1\\Proyecto final\\COMPIX\\Compix.Api\\Compix.Api.csproj",
+      "filePath": "C:\\Users\\gael1\\Documents\\TOPICOS_U1\\Proyecto final\\COMPIX\\Compix.Api\\Compix.Api.csproj",
+      "libraryId": "Microsoft.OpenApi",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    }
+  ]
+}
