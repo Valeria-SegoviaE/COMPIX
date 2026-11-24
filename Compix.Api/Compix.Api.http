@@ -1,0 +1,6 @@
+@Compix.Api_HostAddress = http://localhost:5064
+
+GET {{Compix.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

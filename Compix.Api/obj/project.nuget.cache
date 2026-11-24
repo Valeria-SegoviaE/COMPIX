@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "XvigNloTrMg=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\gael1\\Documents\\TOPICOS_U1\\Proyecto final\\COMPIX\\Compix.Api\\Compix.Api.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\gael1\\.nuget\\packages\\dapper\\2.1.100\\dapper.2.1.100.nupkg.sha512",
+    "C:\\Users\\gael1\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.15\\microsoft.aspnetcore.openapi.10.0.15.nupkg.sha512",
+    "C:\\Users\\gael1\\.nuget\\packages\\microsoft.openapi\\2.13.0\\microsoft.openapi.2.13.0.nupkg.sha512"
+  ],
+  "logs": []
+}
