@@ -1,189 +1,327 @@
-using System.Data;
 using Compix.Api.Contracts.Equipos;
+using Compix.Api.Data;
 using Dapper;
-using MySqlConnector;
-using Microsoft.AspNetCore.WebUtilities;
 
 namespace Compix.Api.Services;
 
-public sealed class EquipoService(IConfiguration configuration) : IEquipoService
+public sealed class EquipoService(IMySqlConnectionFactory connectionFactory) : IEquipoService
 {
-    private const string ObtenerPorIdSql = """
+    private const string EquipoSelectSql = """
         SELECT
-            eq.id_equipo,
-            eq.numero_serie,
-            eq.codigo_inventario,
-            eq.tipo_equipo,
-            eq.marca,
-            eq.modelo,
-            eq.procesador,
-            eq.memoria_ram_gb,
-            eq.almacenamiento,
-            eq.sistema_operativo,
-            eq.estado_operativo,
-            eq.fecha_adquisicion,
-            eq.notas_generales,
-            emp.id_empleado AS id_empleado_asignado,
-            emp.nombre_completo AS empleado_asignado,
-            dep.nombre AS departamento_asignado
+            eq.id_equipo AS IdEquipo,
+            eq.numero_serie AS NumeroSerie,
+            eq.codigo_inventario AS CodigoInventario,
+            eq.tipo_equipo AS TipoEquipo,
+            eq.marca AS Marca,
+            eq.modelo AS Modelo,
+            eq.procesador AS Procesador,
+            eq.memoria_ram_gb AS MemoriaRamGb,
+            eq.almacenamiento AS Almacenamiento,
+            eq.sistema_operativo AS SistemaOperativo,
+            eq.estado_operativo AS EstadoOperativo,
+            eq.fecha_adquisicion AS FechaAdquisicion,
+            eq.notas_generales AS NotasGenerales,
+            emp.id_empleado AS IdEmpleadoAsignado,
+            emp.nombre_completo AS EmpleadoAsignado,
+            dep.nombre AS DepartamentoAsignado
         FROM Equipos eq
         LEFT JOIN Asignaciones asig
             ON eq.id_equipo = asig.id_equipo AND asig.fecha_devolucion IS NULL
         LEFT JOIN Empleados emp ON asig.id_empleado = emp.id_empleado
         LEFT JOIN Departamentos dep ON emp.id_departamento = dep.id_departamento
-        WHERE eq.id_equipo = @Id
-        LIMIT 1
         """;
-
-    private readonly string? _connectionString = configuration.GetConnectionString("DefaultConnection");
 
     public async Task<IReadOnlyList<EquipoResponse>> ObtenerTodosAsync(
         string? estado,
         string? tipo,
+        string? marca,
         string? busqueda,
         CancellationToken cancellationToken)
     {
-        await using var connection = CrearConexion();
-        await connection.OpenAsync(cancellationToken);
+        var sql = $"""
+            {EquipoSelectSql}
+            WHERE (@Estado IS NULL OR eq.estado_operativo = @Estado)
+              AND (@Tipo IS NULL OR eq.tipo_equipo = @Tipo)
+              AND (@Marca IS NULL OR eq.marca LIKE CONCAT('%', @Marca, '%'))
+              AND (
+                    @Busqueda IS NULL
+                    OR eq.numero_serie LIKE CONCAT('%', @Busqueda, '%')
+                    OR eq.codigo_inventario LIKE CONCAT('%', @Busqueda, '%')
+                    OR eq.marca LIKE CONCAT('%', @Busqueda, '%')
+                    OR eq.modelo LIKE CONCAT('%', @Busqueda, '%')
+                  )
+            ORDER BY eq.id_equipo DESC
+            """;
 
+        await using var connection = connectionFactory.CreateConnection();
         var command = new CommandDefinition(
-            "sp_ConsultarEquipos",
-            new { p_estado = estado, p_tipo = tipo, p_busqueda = busqueda },
-            commandType: CommandType.StoredProcedure,
-            cancellationToken: cancellationToken);
-
-        var equipos = await connection.QueryAsync<EquipoRow>(command);
-        return equipos.Select(Convertir).ToArray();
-    }
-
-    public async Task<EquipoResponse?> ObtenerPorIdAsync(int id, CancellationToken cancellationToken)
-    {
-        await using var connection = CrearConexion();
-        await connection.OpenAsync(cancellationToken);
-
-        var command = new CommandDefinition(
-            ObtenerPorIdSql,
-            new { Id = id },
-            cancellationToken: cancellationToken);
-
-        var equipo = await connection.QuerySingleOrDefaultAsync<EquipoRow>(command);
-        return equipo is null ? null : Convertir(equipo);
-    }
-
-    public async Task<int> CrearAsync(CrearEquipoRequest request, CancellationToken cancellationToken)
-    {
-        await using var connection = CrearConexion();
-        await connection.OpenAsync(cancellationToken);
-
-        var command = new CommandDefinition(
-            "sp_RegistrarEquipo",
+            sql,
             new
             {
-                p_numero_serie = request.NumeroSerie,
-                p_codigo_inventario = request.CodigoInventario,
-                p_tipo_equipo = request.TipoEquipo,
-                p_marca = request.Marca,
-                p_modelo = request.Modelo,
-                p_procesador = request.Procesador,
-                p_memoria_ram_gb = request.MemoriaRamGb,
-                p_almacenamiento = request.Almacenamiento,
-                p_sistema_operativo = request.SistemaOperativo,
-                p_fecha_adquisicion = request.FechaAdquisicion,
-                p_notas_generales = request.NotasGenerales,
-                p_id_usuario_responsable = request.IdUsuarioResponsable
+                Estado = NullIfWhiteSpace(estado),
+                Tipo = NullIfWhiteSpace(tipo),
+                Marca = NullIfWhiteSpace(marca),
+                Busqueda = NullIfWhiteSpace(busqueda)
             },
-            commandType: CommandType.StoredProcedure,
             cancellationToken: cancellationToken);
-
-        return await connection.QuerySingleAsync<int>(command);
+        var equipos = await connection.QueryAsync<EquipoResponse>(command);
+        return equipos.AsList();
     }
 
-    private MySqlConnection CrearConexion()
+    public async Task<EquipoResponse?> ObtenerPorIdAsync(
+        int id,
+        CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(_connectionString))
-        {
-            throw new InvalidOperationException(
-                "Falta configurar la cadena de conexión 'ConnectionStrings:DefaultConnection'.");
-        }
-
-        var connectionString = _connectionString;
-        if (Uri.TryCreate(connectionString, UriKind.Absolute, out var uri)
-            && uri.Scheme.Equals("mysql", StringComparison.OrdinalIgnoreCase))
-        {
-            connectionString = ConvertirUriMySql(uri);
-        }
-
-        return new MySqlConnection(connectionString);
+        await using var connection = connectionFactory.CreateConnection();
+        return await connection.QuerySingleOrDefaultAsync<EquipoResponse>(new CommandDefinition(
+            $"{EquipoSelectSql} WHERE eq.id_equipo = @Id LIMIT 1",
+            new { Id = id },
+            cancellationToken: cancellationToken));
     }
 
-    private static string ConvertirUriMySql(Uri uri)
+    public async Task<EquipoResponse?> ObtenerPorCodigoAsync(
+        string codigo,
+        CancellationToken cancellationToken)
     {
-        var separator = uri.UserInfo.IndexOf(':');
-        if (separator <= 0 || separator == uri.UserInfo.Length - 1)
+        await using var connection = connectionFactory.CreateConnection();
+        return await connection.QuerySingleOrDefaultAsync<EquipoResponse>(new CommandDefinition(
+            $"""
+            {EquipoSelectSql}
+            WHERE eq.numero_serie = @Codigo OR eq.codigo_inventario = @Codigo
+            LIMIT 1
+            """,
+            new { Codigo = codigo },
+            cancellationToken: cancellationToken));
+    }
+
+    public async Task<int> CrearAsync(
+        EquipoRequest request,
+        int idUsuarioResponsable,
+        CancellationToken cancellationToken)
+    {
+        const string insertSql = """
+            INSERT INTO Equipos (
+                numero_serie,
+                codigo_inventario,
+                tipo_equipo,
+                marca,
+                modelo,
+                procesador,
+                memoria_ram_gb,
+                almacenamiento,
+                sistema_operativo,
+                estado_operativo,
+                fecha_adquisicion,
+                notas_generales
+            )
+            VALUES (
+                @NumeroSerie,
+                @CodigoInventario,
+                @TipoEquipo,
+                @Marca,
+                @Modelo,
+                @Procesador,
+                @MemoriaRamGb,
+                @Almacenamiento,
+                @SistemaOperativo,
+                'Disponible',
+                @FechaAdquisicion,
+                @NotasGenerales
+            )
+            """;
+        const string historySql = """
+            INSERT INTO Historial_Movimientos (
+                id_equipo,
+                id_usuario_responsable,
+                tipo_movimiento,
+                estado_anterior,
+                estado_nuevo,
+                descripcion_detalle
+            )
+            VALUES (
+                @IdEquipo,
+                @IdUsuarioResponsable,
+                'Registro',
+                NULL,
+                'Disponible',
+                'Registro inicial del equipo en el inventario.'
+            )
+            """;
+
+        await using var connection = connectionFactory.CreateConnection();
+        await connection.OpenAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        await connection.ExecuteAsync(new CommandDefinition(
+            insertSql,
+            request,
+            transaction,
+            cancellationToken: cancellationToken));
+        var id = await connection.ExecuteScalarAsync<int>(new CommandDefinition(
+            "SELECT LAST_INSERT_ID()",
+            transaction: transaction,
+            cancellationToken: cancellationToken));
+        await connection.ExecuteAsync(new CommandDefinition(
+            historySql,
+            new { IdEquipo = id, IdUsuarioResponsable = idUsuarioResponsable },
+            transaction,
+            cancellationToken: cancellationToken));
+        await transaction.CommitAsync(cancellationToken);
+        return id;
+    }
+
+    public async Task<EquipoResponse?> ActualizarAsync(
+        int idEquipo,
+        EquipoRequest request,
+        CancellationToken cancellationToken)
+    {
+        const string updateSql = """
+            UPDATE Equipos
+            SET numero_serie = @NumeroSerie,
+                codigo_inventario = @CodigoInventario,
+                tipo_equipo = @TipoEquipo,
+                marca = @Marca,
+                modelo = @Modelo,
+                procesador = @Procesador,
+                memoria_ram_gb = @MemoriaRamGb,
+                almacenamiento = @Almacenamiento,
+                sistema_operativo = @SistemaOperativo,
+                fecha_adquisicion = @FechaAdquisicion,
+                notas_generales = @NotasGenerales
+            WHERE id_equipo = @IdEquipo
+            """;
+        const string existsSql = """
+            SELECT EXISTS(SELECT 1 FROM Equipos WHERE id_equipo = @IdEquipo)
+            """;
+
+        await using var connection = connectionFactory.CreateConnection();
+        await connection.OpenAsync(cancellationToken);
+        var command = new CommandDefinition(
+            updateSql,
+            new
+            {
+                IdEquipo = idEquipo,
+                request.NumeroSerie,
+                request.CodigoInventario,
+                request.TipoEquipo,
+                request.Marca,
+                request.Modelo,
+                request.Procesador,
+                request.MemoriaRamGb,
+                request.Almacenamiento,
+                request.SistemaOperativo,
+                request.FechaAdquisicion,
+                request.NotasGenerales
+            },
+            cancellationToken: cancellationToken);
+        var changed = await connection.ExecuteAsync(command);
+
+        if (changed == 0 && !await connection.ExecuteScalarAsync<bool>(new CommandDefinition(
+                existsSql,
+                new { IdEquipo = idEquipo },
+                cancellationToken: cancellationToken)))
         {
-            throw new InvalidOperationException(
-                "La URI MySQL debe incluir usuario y contraseña.");
+            return null;
         }
 
-        var query = QueryHelpers.ParseQuery(uri.Query);
-        var sslModeValue = query.TryGetValue("ssl-mode", out var configuredSslMode)
-            ? configuredSslMode.ToString()
-            : nameof(MySqlSslMode.Required);
+        return await connection.QuerySingleOrDefaultAsync<EquipoResponse>(new CommandDefinition(
+            $"{EquipoSelectSql} WHERE eq.id_equipo = @IdEquipo LIMIT 1",
+            new { IdEquipo = idEquipo },
+            cancellationToken: cancellationToken));
+    }
 
-        if (!Enum.TryParse<MySqlSslMode>(sslModeValue, true, out var sslMode))
+    public async Task<bool> CambiarEstadoAsync(
+        int idEquipo,
+        string estadoOperativo,
+        int idUsuarioResponsable,
+        CancellationToken cancellationToken)
+    {
+        const string getStateSql = """
+            SELECT estado_operativo
+            FROM Equipos
+            WHERE id_equipo = @IdEquipo
+            FOR UPDATE
+            """;
+        const string updateSql = """
+            UPDATE Equipos
+            SET estado_operativo = @EstadoOperativo
+            WHERE id_equipo = @IdEquipo
+            """;
+        const string historySql = """
+            INSERT INTO Historial_Movimientos (
+                id_equipo,
+                id_usuario_responsable,
+                tipo_movimiento,
+                estado_anterior,
+                estado_nuevo,
+                descripcion_detalle
+            )
+            VALUES (
+                @IdEquipo,
+                @IdUsuarioResponsable,
+                @TipoMovimiento,
+                @EstadoAnterior,
+                @EstadoNuevo,
+                @Descripcion
+            )
+            """;
+
+        await using var connection = connectionFactory.CreateConnection();
+        await connection.OpenAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        var oldState = await connection.QuerySingleOrDefaultAsync<string?>(new CommandDefinition(
+            getStateSql,
+            new { IdEquipo = idEquipo },
+            transaction,
+            cancellationToken: cancellationToken));
+
+        if (oldState is null)
         {
-            throw new InvalidOperationException("La URI MySQL contiene un valor ssl-mode no válido.");
+            await transaction.RollbackAsync(cancellationToken);
+            return false;
         }
 
-        var builder = new MySqlConnectionStringBuilder
+        if (oldState == estadoOperativo)
         {
-            Server = uri.Host,
-            Port = (uint)uri.Port,
-            UserID = Uri.UnescapeDataString(uri.UserInfo[..separator]),
-            Password = Uri.UnescapeDataString(uri.UserInfo[(separator + 1)..]),
-            Database = Uri.UnescapeDataString(uri.AbsolutePath.TrimStart('/')),
-            SslMode = sslMode
+            await transaction.CommitAsync(cancellationToken);
+            return true;
+        }
+
+        await connection.ExecuteAsync(new CommandDefinition(
+            updateSql,
+            new { IdEquipo = idEquipo, EstadoOperativo = estadoOperativo },
+            transaction,
+            cancellationToken: cancellationToken));
+        await connection.ExecuteAsync(new CommandDefinition(
+            historySql,
+            new
+            {
+                IdEquipo = idEquipo,
+                IdUsuarioResponsable = idUsuarioResponsable,
+                TipoMovimiento = TipoMovimiento(estadoOperativo),
+                EstadoAnterior = oldState,
+                EstadoNuevo = estadoOperativo,
+                Descripcion = $"Cambio de estado de '{oldState}' a '{estadoOperativo}'."
+            },
+            transaction,
+            cancellationToken: cancellationToken));
+        await transaction.CommitAsync(cancellationToken);
+        return true;
+    }
+
+    public Task<bool> DarDeBajaAsync(
+        int idEquipo,
+        int idUsuarioResponsable,
+        CancellationToken cancellationToken) =>
+        CambiarEstadoAsync(idEquipo, "Dado de Baja", idUsuarioResponsable, cancellationToken);
+
+    private static string TipoMovimiento(string estadoOperativo) =>
+        estadoOperativo switch
+        {
+            "En Mantenimiento" => "Mantenimiento",
+            "Dado de Baja" => "Baja",
+            _ => "Cambio Estado"
         };
 
-        return builder.ConnectionString;
-    }
-
-    private static EquipoResponse Convertir(EquipoRow row) =>
-        new(
-            row.IdEquipo,
-            row.NumeroSerie,
-            row.CodigoInventario,
-            row.TipoEquipo,
-            row.Marca,
-            row.Modelo,
-            row.Procesador,
-            row.MemoriaRamGb,
-            row.Almacenamiento,
-            row.SistemaOperativo,
-            row.EstadoOperativo,
-            row.FechaAdquisicion is null ? null : DateOnly.FromDateTime(row.FechaAdquisicion.Value),
-            row.NotasGenerales,
-            row.IdEmpleadoAsignado,
-            row.EmpleadoAsignado,
-            row.DepartamentoAsignado);
-
-    private sealed class EquipoRow
-    {
-        public int IdEquipo { get; set; }
-        public string? NumeroSerie { get; set; }
-        public string? CodigoInventario { get; set; }
-        public string? TipoEquipo { get; set; }
-        public string? Marca { get; set; }
-        public string? Modelo { get; set; }
-        public string? Procesador { get; set; }
-        public int? MemoriaRamGb { get; set; }
-        public string? Almacenamiento { get; set; }
-        public string? SistemaOperativo { get; set; }
-        public string? EstadoOperativo { get; set; }
-        public DateTime? FechaAdquisicion { get; set; }
-        public string? NotasGenerales { get; set; }
-        public int? IdEmpleadoAsignado { get; set; }
-        public string? EmpleadoAsignado { get; set; }
-        public string? DepartamentoAsignado { get; set; }
-    }
+    private static string? NullIfWhiteSpace(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 }
