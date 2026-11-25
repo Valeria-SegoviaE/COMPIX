@@ -47,3 +47,16 @@ C:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\obj\Debug\n
 C:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\obj\Debug\net10.0\Compix.Api.pdb
 C:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\obj\Debug\net10.0\Compix.Api.genruntimeconfig.cache
 C:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\obj\Debug\net10.0\ref\Compix.Api.dll
+C:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\bin\Debug\net10.0\Namotion.Reflection.dll
+C:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\bin\Debug\net10.0\Newtonsoft.Json.dll
+C:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\bin\Debug\net10.0\NJsonSchema.dll
+C:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\bin\Debug\net10.0\NJsonSchema.Annotations.dll
+C:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\bin\Debug\net10.0\NJsonSchema.NewtonsoftJson.dll
+C:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\bin\Debug\net10.0\NJsonSchema.Yaml.dll
+C:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\bin\Debug\net10.0\NSwag.Annotations.dll
+C:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\bin\Debug\net10.0\NSwag.AspNetCore.dll
+C:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\bin\Debug\net10.0\NSwag.Core.dll
+C:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\bin\Debug\net10.0\NSwag.Core.Yaml.dll
+C:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\bin\Debug\net10.0\NSwag.Generation.dll
+C:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\bin\Debug\net10.0\NSwag.Generation.AspNetCore.dll
+C:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\bin\Debug\net10.0\YamlDotNet.dll

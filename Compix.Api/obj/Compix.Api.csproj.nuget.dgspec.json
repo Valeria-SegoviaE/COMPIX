@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\gael1\\Documents\\TOPICOS_U1\\Proyecto final\\COMPIX\\Compix.Api\\Compix.Api.csproj": {}
+    "c:\\Users\\gael1\\Documents\\TOPICOS_U1\\Proyecto final\\COMPIX\\Compix.Api\\Compix.Api.csproj": {}
   },
   "projects": {
-    "C:\\Users\\gael1\\Documents\\TOPICOS_U1\\Proyecto final\\COMPIX\\Compix.Api\\Compix.Api.csproj": {
+    "c:\\Users\\gael1\\Documents\\TOPICOS_U1\\Proyecto final\\COMPIX\\Compix.Api\\Compix.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\gael1\\Documents\\TOPICOS_U1\\Proyecto final\\COMPIX\\Compix.Api\\Compix.Api.csproj",
+        "projectUniqueName": "c:\\Users\\gael1\\Documents\\TOPICOS_U1\\Proyecto final\\COMPIX\\Compix.Api\\Compix.Api.csproj",
         "projectName": "Compix.Api",
-        "projectPath": "C:\\Users\\gael1\\Documents\\TOPICOS_U1\\Proyecto final\\COMPIX\\Compix.Api\\Compix.Api.csproj",
+        "projectPath": "c:\\Users\\gael1\\Documents\\TOPICOS_U1\\Proyecto final\\COMPIX\\Compix.Api\\Compix.Api.csproj",
         "packagesPath": "C:\\Users\\gael1\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\gael1\\Documents\\TOPICOS_U1\\Proyecto final\\COMPIX\\Compix.Api\\obj\\",
+        "outputPath": "c:\\Users\\gael1\\Documents\\TOPICOS_U1\\Proyecto final\\COMPIX\\Compix.Api\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\gael1\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -59,6 +59,10 @@
             "MySqlConnector": {
               "target": "Package",
               "version": "[2.6.1, )"
+            },
+            "NSwag.AspNetCore": {
+              "target": "Package",
+              "version": "[14.8.0, )"
             }
           },
           "imports": [
