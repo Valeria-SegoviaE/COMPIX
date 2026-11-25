@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Compix.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3e24a5cf197ec4c3212ddfda380849f860f94b11")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d6449ed7444479d6c80da1f46d7739ba3dfd35c9")]
 [assembly: System.Reflection.AssemblyProductAttribute("Compix.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Compix.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

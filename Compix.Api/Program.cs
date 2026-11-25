@@ -22,6 +22,14 @@ app.UseStatusCodePages();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwaggerUi(settings =>
+    {
+        settings.Path = "/swagger";
+        settings.DocumentTitle = "Compix API";
+        settings.SwaggerRoutes.Add(new NSwag.AspNetCore.SwaggerUiRoute(
+            "v1",
+            "/openapi/v1.json"));
+    });
 }
 
 app.UseHttpsRedirection();
