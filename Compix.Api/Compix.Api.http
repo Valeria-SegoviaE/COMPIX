@@ -1,6 +1,34 @@
 @Compix.Api_HostAddress = http://localhost:5064
 
-GET {{Compix.Api_HostAddress}}/weatherforecast/
+### Listar equipos (filtros opcionales: estado, tipo, busqueda)
+GET {{Compix.Api_HostAddress}}/api/equipos?estado=Disponible&tipo=Laptop&busqueda=Dell
 Accept: application/json
+
+###
+
+### Consultar equipo por ID
+GET {{Compix.Api_HostAddress}}/api/equipos/1
+Accept: application/json
+
+###
+
+### Registrar equipo
+POST {{Compix.Api_HostAddress}}/api/equipos
+Content-Type: application/json
+
+{
+  "numeroSerie": "SN-10001",
+  "codigoInventario": "COMP-001",
+  "tipoEquipo": "Laptop",
+  "marca": "Dell",
+  "modelo": "Latitude",
+  "procesador": "Intel Core i5",
+  "memoriaRamGb": 16,
+  "almacenamiento": "512 GB SSD",
+  "sistemaOperativo": "Windows 11",
+  "fechaAdquisicion": "2026-01-15",
+  "notasGenerales": "Equipo de prueba",
+  "idUsuarioResponsable": 1
+}
 
 ###
