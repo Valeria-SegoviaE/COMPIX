@@ -1,34 +1,169 @@
-@Compix.Api_HostAddress = http://localhost:5064
+@baseUrl = http://localhost:5064
+@token = reemplaza-por-el-token-obtenido-en-login
+@usuarioId = 1
+@departamentoId = 1
+@empleadoId = 1
+@equipoId = 1
 
-### Listar equipos (filtros opcionales: estado, tipo, busqueda)
-GET {{Compix.Api_HostAddress}}/api/equipos?estado=Disponible&tipo=Laptop&busqueda=Dell
-Accept: application/json
-
-###
-
-### Consultar equipo por ID
-GET {{Compix.Api_HostAddress}}/api/equipos/1
-Accept: application/json
-
-###
-
-### Registrar equipo
-POST {{Compix.Api_HostAddress}}/api/equipos
+### Iniciar sesión
+POST {{baseUrl}}/api/auth/login
 Content-Type: application/json
 
 {
-  "numeroSerie": "SN-10001",
-  "codigoInventario": "COMP-001",
+  "correo": "admin@compix.local",
+  "contrasena": "reemplaza-por-la-contrasena"
+}
+
+### Obtener perfil
+GET {{baseUrl}}/api/auth/perfil
+Authorization: Bearer {{token}}
+
+### Listar usuarios TI (Admin)
+GET {{baseUrl}}/api/usuarios
+Authorization: Bearer {{token}}
+
+### Crear usuario TI (Admin)
+POST {{baseUrl}}/api/usuarios
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombreCompleto": "Técnico de soporte",
+  "correo": "soporte@compix.local",
+  "contrasena": "reemplaza-por-una-contrasena-segura",
+  "rol": "Soporte"
+}
+
+### Activar o desactivar usuario TI (Admin)
+PUT {{baseUrl}}/api/usuarios/{{usuarioId}}/estado
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "activo": false
+}
+
+### Listar departamentos
+GET {{baseUrl}}/api/departamentos
+Authorization: Bearer {{token}}
+
+### Crear departamento
+POST {{baseUrl}}/api/departamentos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Sistemas",
+  "ubicacionFisica": "Edificio A"
+}
+
+### Actualizar departamento
+PUT {{baseUrl}}/api/departamentos/{{departamentoId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Tecnología",
+  "ubicacionFisica": "Edificio B"
+}
+
+### Listar empleados por nombre y departamento
+GET {{baseUrl}}/api/empleados?nombre=Ana&idDepartamento={{departamentoId}}
+Authorization: Bearer {{token}}
+
+### Obtener empleado y sus equipos actuales
+GET {{baseUrl}}/api/empleados/{{empleadoId}}
+Authorization: Bearer {{token}}
+
+### Registrar empleado
+POST {{baseUrl}}/api/empleados
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "numeroNomina": "N-1001",
+  "nombreCompleto": "Ana Pérez",
+  "correoCorporativo": "ana@compix.local",
+  "puesto": "Analista",
+  "idDepartamento": {{departamentoId}}
+}
+
+### Actualizar empleado
+PUT {{baseUrl}}/api/empleados/{{empleadoId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "numeroNomina": "N-1001",
+  "nombreCompleto": "Ana Pérez",
+  "correoCorporativo": "ana.perez@compix.local",
+  "puesto": "Analista senior",
+  "idDepartamento": {{departamentoId}}
+}
+
+### Dar de baja empleado
+PATCH {{baseUrl}}/api/empleados/{{empleadoId}}/baja
+Authorization: Bearer {{token}}
+
+### Listar equipos con filtros opcionales
+GET {{baseUrl}}/api/equipos?estado=Disponible&tipo=Laptop&marca=Lenovo&busqueda=ABC
+Authorization: Bearer {{token}}
+
+### Obtener equipo por ID
+GET {{baseUrl}}/api/equipos/{{equipoId}}
+Authorization: Bearer {{token}}
+
+### Buscar equipo por número de serie o código de inventario
+GET {{baseUrl}}/api/equipos/codigo/INV-1001
+Authorization: Bearer {{token}}
+
+### Registrar equipo
+POST {{baseUrl}}/api/equipos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "numeroSerie": "SER-1001",
+  "codigoInventario": "INV-1001",
   "tipoEquipo": "Laptop",
-  "marca": "Dell",
-  "modelo": "Latitude",
-  "procesador": "Intel Core i5",
+  "marca": "Lenovo",
+  "modelo": "ThinkPad",
+  "procesador": "Intel Core i7",
   "memoriaRamGb": 16,
   "almacenamiento": "512 GB SSD",
   "sistemaOperativo": "Windows 11",
-  "fechaAdquisicion": "2026-01-15",
-  "notasGenerales": "Equipo de prueba",
-  "idUsuarioResponsable": 1
+  "fechaAdquisicion": "2025-01-15",
+  "notasGenerales": "Equipo de prueba"
 }
 
-###
+### Actualizar especificaciones del equipo
+PUT {{baseUrl}}/api/equipos/{{equipoId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "numeroSerie": "SER-1001",
+  "codigoInventario": "INV-1001",
+  "tipoEquipo": "Laptop",
+  "marca": "Lenovo",
+  "modelo": "ThinkPad T14",
+  "procesador": "Intel Core i7",
+  "memoriaRamGb": 32,
+  "almacenamiento": "1 TB SSD",
+  "sistemaOperativo": "Windows 11",
+  "fechaAdquisicion": "2025-01-15",
+  "notasGenerales": "Memoria ampliada"
+}
+
+### Cambiar estado del equipo
+PATCH {{baseUrl}}/api/equipos/{{equipoId}}/estado
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "estadoOperativo": "En Mantenimiento"
+}
+
+### Dar de baja equipo
+DELETE {{baseUrl}}/api/equipos/{{equipoId}}
+Authorization: Bearer {{token}}
