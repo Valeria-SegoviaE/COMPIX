@@ -7,6 +7,8 @@ Estructura del proyecto:
 - `docs/` diagramas C4 y documentación
 - `.github/workflows/` automatización de pruebas y compilación
 
+## Descripción
+Aplicación web para registrar, consultar y administrar equipos de cómputo.
 ## Ejecutar el frontend
 
 ```bash
