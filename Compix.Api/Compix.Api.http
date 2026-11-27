@@ -4,8 +4,6 @@
 @departamentoId = 1
 @empleadoId = 1
 @equipoId = 1
-@asignacionId = 1
-@mantenimientoId = 1
 
 ### Iniciar sesión
 POST {{baseUrl}}/api/auth/login
@@ -168,84 +166,4 @@ Content-Type: application/json
 
 ### Dar de baja equipo
 DELETE {{baseUrl}}/api/equipos/{{equipoId}}
-Authorization: Bearer {{token}}
-
-### Listar asignaciones activas
-GET {{baseUrl}}/api/asignaciones
-Authorization: Bearer {{token}}
-
-### Ver historial de asignaciones
-GET {{baseUrl}}/api/asignaciones/historial
-Authorization: Bearer {{token}}
-
-### Asignar equipo disponible a empleado
-POST {{baseUrl}}/api/asignaciones/asignar
-Authorization: Bearer {{token}}
-Content-Type: application/json
-
-{
-  "idEquipo": {{equipoId}},
-  "idEmpleado": {{empleadoId}},
-  "observacionesEntrega": "Entregado con cargador"
-}
-
-### Reasignar equipo a otro empleado
-POST {{baseUrl}}/api/asignaciones/reasignar
-Authorization: Bearer {{token}}
-Content-Type: application/json
-
-{
-  "idEquipo": {{equipoId}},
-  "idEmpleadoNuevo": {{empleadoId}},
-  "observacionesEntrega": "Equipo recibido",
-  "observacionesDevolucion": "Entrega de empleado anterior"
-}
-
-### Devolver asignación activa
-PUT {{baseUrl}}/api/asignaciones/{{asignacionId}}/devolver
-Authorization: Bearer {{token}}
-Content-Type: application/json
-
-{
-  "observacionesDevolucion": "Equipo revisado y completo"
-}
-
-### Listar mantenimientos abiertos
-GET {{baseUrl}}/api/mantenimientos
-Authorization: Bearer {{token}}
-
-### Ver mantenimientos de un equipo
-GET {{baseUrl}}/api/mantenimientos/equipo/{{equipoId}}
-Authorization: Bearer {{token}}
-
-### Ingresar equipo a mantenimiento
-POST {{baseUrl}}/api/mantenimientos
-Authorization: Bearer {{token}}
-Content-Type: application/json
-
-{
-  "idEquipo": {{equipoId}},
-  "tipoMantenimiento": "Correctivo",
-  "descripcionProblema": "No enciende"
-}
-
-### Cerrar mantenimiento
-PUT {{baseUrl}}/api/mantenimientos/{{mantenimientoId}}/cerrar
-Authorization: Bearer {{token}}
-Content-Type: application/json
-
-{
-  "solucionAplicada": "Se reemplazó la fuente de poder"
-}
-
-### Consultar bitácora general
-GET {{baseUrl}}/api/historial
-Authorization: Bearer {{token}}
-
-### Consultar trazabilidad de un equipo
-GET {{baseUrl}}/api/historial/equipo/{{equipoId}}
-Authorization: Bearer {{token}}
-
-### Obtener resumen del dashboard
-GET {{baseUrl}}/api/dashboard/resumen
 Authorization: Bearer {{token}}
