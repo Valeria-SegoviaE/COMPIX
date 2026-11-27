@@ -60,3 +60,12 @@ C:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\bin\Debug\n
 C:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\bin\Debug\net10.0\NSwag.Generation.dll
 C:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\bin\Debug\net10.0\NSwag.Generation.AspNetCore.dll
 C:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\bin\Debug\net10.0\YamlDotNet.dll
+c:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\bin\Debug\net10.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+c:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\bin\Debug\net10.0\Microsoft.Bcl.Cryptography.dll
+c:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\bin\Debug\net10.0\Microsoft.IdentityModel.Abstractions.dll
+c:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\bin\Debug\net10.0\Microsoft.IdentityModel.JsonWebTokens.dll
+c:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\bin\Debug\net10.0\Microsoft.IdentityModel.Logging.dll
+c:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\bin\Debug\net10.0\Microsoft.IdentityModel.Protocols.dll
+c:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\bin\Debug\net10.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+c:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\bin\Debug\net10.0\Microsoft.IdentityModel.Tokens.dll
+c:\Users\gael1\Documents\TOPICOS_U1\Proyecto final\COMPIX\Compix.Api\bin\Debug\net10.0\System.IdentityModel.Tokens.Jwt.dll

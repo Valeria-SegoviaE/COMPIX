@@ -29,6 +29,10 @@ if (jwtSettings.ExpirationMinutes <= 0)
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<IEquipoService, EquipoService>();
+builder.Services.AddScoped<IAsignacionesService, AsignacionesService>();
+builder.Services.AddScoped<IMantenimientosService, MantenimientosService>();
+builder.Services.AddScoped<IHistorialService, HistorialService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<MySqlConflictExceptionHandler>();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
