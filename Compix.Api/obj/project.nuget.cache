@@ -1,11 +1,19 @@
 {
   "version": 2,
-  "dgSpecHash": "4ThbJ4WaiCk=",
+  "dgSpecHash": "NY2Kif9eooU=",
   "success": true,
-  "projectFilePath": "c:\\Users\\gael1\\Documents\\TOPICOS_U1\\Proyecto final\\COMPIX\\Compix.Api\\Compix.Api.csproj",
+  "projectFilePath": "C:\\Users\\gael1\\Documents\\TOPICOS_U1\\Proyecto final\\COMPIX\\Compix.Api\\Compix.Api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\gael1\\.nuget\\packages\\dapper\\2.1.100\\dapper.2.1.100.nupkg.sha512",
+    "C:\\Users\\gael1\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\10.0.15\\microsoft.aspnetcore.authentication.jwtbearer.10.0.15.nupkg.sha512",
     "C:\\Users\\gael1\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.15\\microsoft.aspnetcore.openapi.10.0.15.nupkg.sha512",
+    "C:\\Users\\gael1\\.nuget\\packages\\microsoft.bcl.cryptography\\10.0.2\\microsoft.bcl.cryptography.10.0.2.nupkg.sha512",
+    "C:\\Users\\gael1\\.nuget\\packages\\microsoft.identitymodel.abstractions\\8.19.2\\microsoft.identitymodel.abstractions.8.19.2.nupkg.sha512",
+    "C:\\Users\\gael1\\.nuget\\packages\\microsoft.identitymodel.jsonwebtokens\\8.19.2\\microsoft.identitymodel.jsonwebtokens.8.19.2.nupkg.sha512",
+    "C:\\Users\\gael1\\.nuget\\packages\\microsoft.identitymodel.logging\\8.19.2\\microsoft.identitymodel.logging.8.19.2.nupkg.sha512",
+    "C:\\Users\\gael1\\.nuget\\packages\\microsoft.identitymodel.protocols\\8.19.2\\microsoft.identitymodel.protocols.8.19.2.nupkg.sha512",
+    "C:\\Users\\gael1\\.nuget\\packages\\microsoft.identitymodel.protocols.openidconnect\\8.19.2\\microsoft.identitymodel.protocols.openidconnect.8.19.2.nupkg.sha512",
+    "C:\\Users\\gael1\\.nuget\\packages\\microsoft.identitymodel.tokens\\8.19.2\\microsoft.identitymodel.tokens.8.19.2.nupkg.sha512",
     "C:\\Users\\gael1\\.nuget\\packages\\microsoft.openapi\\2.13.0\\microsoft.openapi.2.13.0.nupkg.sha512",
     "C:\\Users\\gael1\\.nuget\\packages\\mysqlconnector\\2.6.1\\mysqlconnector.2.6.1.nupkg.sha512",
     "C:\\Users\\gael1\\.nuget\\packages\\namotion.reflection\\3.5.1\\namotion.reflection.3.5.1.nupkg.sha512",
@@ -20,6 +28,7 @@
     "C:\\Users\\gael1\\.nuget\\packages\\nswag.core.yaml\\14.8.0\\nswag.core.yaml.14.8.0.nupkg.sha512",
     "C:\\Users\\gael1\\.nuget\\packages\\nswag.generation\\14.8.0\\nswag.generation.14.8.0.nupkg.sha512",
     "C:\\Users\\gael1\\.nuget\\packages\\nswag.generation.aspnetcore\\14.8.0\\nswag.generation.aspnetcore.14.8.0.nupkg.sha512",
+    "C:\\Users\\gael1\\.nuget\\packages\\system.identitymodel.tokens.jwt\\8.19.2\\system.identitymodel.tokens.jwt.8.19.2.nupkg.sha512",
     "C:\\Users\\gael1\\.nuget\\packages\\yamldotnet\\16.3.0\\yamldotnet.16.3.0.nupkg.sha512"
   ],
   "logs": []
