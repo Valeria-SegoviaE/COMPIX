@@ -1,8 +1,10 @@
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { IconName } from '../types'
 import { Icon } from '../components/Icon'
 import { EquipmentTable } from '../components/EquipmentTable'
 import { useEquipment } from '../context/EquipmentContext'
+import { getTimeline } from '../services/equipmentService'
 
 function Activity({ icon, color, title, text, time }: { icon: IconName; color: string; title: string; text: string; time: string }) {
   return (
@@ -17,18 +19,34 @@ function Activity({ icon, color, title, text, time }: { icon: IconName; color: s
 export default function Dashboard() {
   const { equipment } = useEquipment()
   const navigate = useNavigate()
+  const [activity, setActivity] = useState<Awaited<ReturnType<typeof getTimeline>>>([])
+  const [activityError, setActivityError] = useState('')
+
+  useEffect(() => {
+    let cancelled = false
+    getTimeline()
+      .then((events) => { if (!cancelled) setActivity(events.slice(0, 4)) })
+      .catch((error: unknown) => {
+        if (!cancelled) setActivityError(error instanceof Error ? error.message : 'No fue posible cargar la actividad.')
+      })
+    return () => { cancelled = true }
+  }, [])
 
   const total = equipment.length
   const activos = equipment.filter((item) => item.status === 'Activo').length
   const disponibles = equipment.filter((item) => item.status === 'Disponible').length
   const mantenimiento = equipment.filter((item) => item.status === 'Mantenimiento').length
   const baja = equipment.filter((item) => item.status === 'Baja').length
-  const cards: { label: string; value: string; change: string; icon: IconName; color: string }[] = [
+  const cards: { label: string; value: string; change: string; icon: IconName; color: string; status?: string }[] = [
     { label: 'Total de equipos', value: String(total), change: 'Inventario registrado', icon: 'monitor', color: 'blue' },
-    { label: 'Equipos activos', value: String(activos), change: `${total ? Math.round(activos * 100 / total) : 0}% del inventario`, icon: 'check', color: 'green' },
-    { label: 'En mantenimiento', value: String(mantenimiento), change: 'Equipos en taller', icon: 'tool', color: 'orange' },
-    { label: 'Dados de baja', value: String(baja), change: 'Bajas registradas', icon: 'archive', color: 'gray' },
+    { label: 'Equipos activos', value: String(activos), change: `${total ? Math.round(activos * 100 / total) : 0}% del inventario`, icon: 'check', color: 'green', status: 'Activo' },
+    { label: 'En mantenimiento', value: String(mantenimiento), change: 'Equipos en taller', icon: 'tool', color: 'orange', status: 'Mantenimiento' },
+    { label: 'Dados de baja', value: String(baja), change: 'Bajas registradas', icon: 'archive', color: 'gray', status: 'Baja' },
   ]
+  const percentage = (count: number) => total ? count * 100 / total : 0
+  const donutStyle = {
+    background: `conic-gradient(#1768e5 0 ${percentage(activos)}%, #54b9a0 ${percentage(activos)}% ${percentage(activos + disponibles)}%, #f0a449 ${percentage(activos + disponibles)}% ${percentage(activos + disponibles + mantenimiento)}%, #9ca9b9 ${percentage(activos + disponibles + mantenimiento)}% 100%)`,
+  }
 
   return (
     <>
@@ -37,7 +55,7 @@ export default function Dashboard() {
           <article className="stat-card" key={card.label}>
             <div className={`stat-icon ${card.color}`}><Icon name={card.icon} /></div>
             <div className="stat-copy"><span>{card.label}</span><strong>{card.value}</strong><small>{card.change}</small></div>
-            <button aria-label={`Ver ${card.label}`}><Icon name="chevron" size={18} /></button>
+            <button aria-label={`Ver ${card.label}`} onClick={() => navigate(card.status ? `/inventario?estado=${encodeURIComponent(card.status)}` : '/inventario')}><Icon name="chevron" size={18} /></button>
           </article>
         ))}
       </section>
@@ -46,10 +64,9 @@ export default function Dashboard() {
         <article className="panel chart-panel">
           <div className="panel-heading">
             <div><h2>Equipos por estado</h2><p>Distribución del inventario actual</p></div>
-            <select><option>Este año</option><option>Este mes</option></select>
           </div>
           <div className="chart-wrap">
-            <div className="donut">
+            <div className="donut" style={donutStyle}>
               <div className="donut-center"><strong>{total}</strong><span>Equipos</span></div>
             </div>
             <div className="chart-legend">
@@ -67,10 +84,12 @@ export default function Dashboard() {
             <button onClick={() => navigate('/historial')}>Ver todo</button>
           </div>
           <div className="activity-list">
-            <Activity icon="users" color="blue" title="Equipo asignado" text="CMP-2025-048 asignado a Mariana Torres" time="Hace 24 min" />
-            <Activity icon="tool" color="orange" title="Cambio de estado" text="CMP-2025-046 enviado a mantenimiento" time="Hace 1 h" />
-            <Activity icon="plus" color="green" title="Nuevo equipo registrado" text="Estación Diseño 06 agregada al inventario" time="Ayer, 16:42" />
-            <Activity icon="edit" color="purple" title="Información actualizada" text="Se editó la ficha de CMP-2025-045" time="Ayer, 11:18" />
+            {activityError && <p className="muted" role="alert">{activityError}</p>}
+            {activity.map((item) => (
+              <Activity key={item.id} icon={item.icon} color={item.color} title={item.title}
+                text={`${item.equipment} · ${item.description}`} time={`${item.date}, ${item.time}`} />
+            ))}
+            {!activityError && activity.length === 0 && <p className="muted">Aún no hay movimientos registrados.</p>}
           </div>
         </article>
       </section>

@@ -27,21 +27,29 @@ export interface Equipment {
 }
 
 export interface Assignment {
+  idAssignment: number
+  equipmentNumericId: number
+  employeeNumericId: number
   employee: string
   department: string
   equipmentName: string
   equipmentId: string
+  serial: string
   date: string
   status: string
 }
 
 export interface TimelineEvent {
+  id: number
+  equipmentNumericId: number
+  occurredAt: string
   date: string
   time: string
   icon: IconName
   color: string
   type: string
   equipment: string
+  responsible: string
   title: string
   description: string
 }

@@ -1,11 +1,12 @@
-import { useState, type FormEvent } from 'react'
-import { Navigate, useNavigate, useParams } from 'react-router-dom'
+import { useEffect, useState, type FormEvent } from 'react'
+import { Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import type { EquipmentStatus, IconName } from '../types'
 import { Icon } from '../components/Icon'
 import { Button } from '../components/Button'
 import { initials, statusClass } from '../components/EquipmentTable'
 import { useEquipment } from '../context/EquipmentContext'
-import { changeEquipmentStatus, typeToApi, updateEquipment } from '../services/equipmentService'
+import { changeEquipmentStatus, getAssignments, getTimeline, typeToApi, updateEquipment } from '../services/equipmentService'
+import type { Assignment, TimelineEvent } from '../types'
 
 interface EditForm {
   inventoryCode: string
@@ -46,6 +47,7 @@ function Info({ label, value, icon }: { label: string; value: string; icon?: Ico
 
 export default function DetalleEquipo() {
   const { id } = useParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const { equipment, loading, replaceEquipment } = useEquipment()
   const navigate = useNavigate()
   const item = equipment.find((e) => e.id === id)
@@ -54,6 +56,9 @@ export default function DetalleEquipo() {
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
   const [nextStatus, setNextStatus] = useState<EquipmentStatus>('Disponible')
+  const [assignment, setAssignment] = useState<Assignment | null>(null)
+  const [lastMovement, setLastMovement] = useState<TimelineEvent | null>(null)
+  const [detailError, setDetailError] = useState('')
   const [editForm, setEditForm] = useState<EditForm>({
     inventoryCode: '',
     serial: '',
@@ -87,6 +92,29 @@ export default function DetalleEquipo() {
     setNotice('')
     setDialog('edit')
   }
+
+  useEffect(() => {
+    if (item && searchParams.get('editar') === '1' && dialog === null) {
+      openEdit()
+      setSearchParams({}, { replace: true })
+    }
+  }, [item?.numericId, searchParams, setSearchParams])
+
+  useEffect(() => {
+    if (!item?.numericId) return
+    let cancelled = false
+    Promise.all([getAssignments(), getTimeline()])
+      .then(([assignments, timeline]) => {
+        if (cancelled) return
+        setAssignment(assignments.find((entry) => entry.equipmentNumericId === item.numericId) ?? null)
+        setLastMovement(timeline.find((entry) => entry.equipmentNumericId === item.numericId) ?? null)
+        setDetailError('')
+      })
+      .catch((loadError: unknown) => {
+        if (!cancelled) setDetailError(loadError instanceof Error ? loadError.message : 'No fue posible cargar el historial del equipo.')
+      })
+    return () => { cancelled = true }
+  }, [item?.numericId, item?.status])
 
   const openStatus = () => {
     if (!item) return
@@ -195,17 +223,18 @@ export default function DetalleEquipo() {
           <section className="panel assigned-card">
             <div className="panel-heading"><h2>Asignación actual</h2></div>
             <div className="assigned-person">
-              <div className="avatar large">{initials(item.employee)}</div>
-              <div><strong>{item.employee}</strong><span>{item.department}</span></div>
+              <div className="avatar large">{initials(assignment?.employee ?? 'Sin asignar')}</div>
+              <div><strong>{assignment?.employee ?? 'Sin asignar'}</strong><span>{assignment?.department ?? '—'}</span></div>
             </div>
-            <div className="mini-info"><Icon name="calendar" /><div><span>Fecha de asignación</span><strong>20 de mayo de 2025</strong></div></div>
-            <button className="link-button" onClick={() => navigate('/asignaciones')}>Ver detalle de asignación <Icon name="chevron" size={15} /></button>
+            <div className="mini-info"><Icon name="calendar" /><div><span>Fecha de asignación</span><strong>{assignment?.date ?? 'Sin asignación activa'}</strong></div></div>
+            {detailError && <p className="login-error" role="alert">{detailError}</p>}
+            <button className="link-button" onClick={() => navigate(`/asignaciones?busqueda=${encodeURIComponent(item.id)}`)}>Ver detalle de asignación <Icon name="chevron" size={15} /></button>
           </section>
           <section className="panel state-card">
             <div className="panel-heading"><h2>Resumen de estado</h2></div>
             <div className="state-row"><span>Estado actual</span><span className={statusClass(item.status)}><i />{item.status}</span></div>
-            <div className="state-row"><span>Última actualización</span><strong>Hoy, 09:42</strong></div>
-            <div className="state-row"><span>Registrado por</span><strong>Carlos Gómez</strong></div>
+            <div className="state-row"><span>Último movimiento</span><strong>{lastMovement ? `${lastMovement.date}, ${lastMovement.time}` : 'Sin movimientos'}</strong></div>
+            <div className="state-row"><span>Responsable</span><strong>{lastMovement?.responsible ?? '—'}</strong></div>
           </section>
         </aside>
       </div>

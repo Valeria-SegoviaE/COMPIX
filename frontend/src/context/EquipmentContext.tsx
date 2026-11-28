@@ -45,9 +45,9 @@ export function EquipmentProvider({ children }: { children: ReactNode }) {
 
   const removeEquipment = async (id: string) => {
     const item = equipment.find((entry) => entry.id === id)
-    if (!item?.numericId) return
+    if (!item?.numericId) throw new Error('No se encontró el identificador del equipo para darlo de baja.')
     await deleteEquipment(item.numericId)
-    setEquipment((items) => items.filter((entry) => entry.id !== id))
+    setEquipment((items) => items.map((entry) => entry.id === id ? { ...entry, status: 'Baja' } : entry))
   }
 
   return (
