@@ -184,3 +184,31 @@ tbody tr { transition: background .15s; } tbody tr:hover { background: #fbfcfe; 
 .login-fields { display: grid; gap: 14px; margin: 6px 0 4px; }
 .login-error { color: #c9343f; background: #fff1f2; border-radius: 7px; padding: 9px 12px; font-size: 11px; }
 .login-note { color: #9aa5b3; font-size: 9.5px; line-height: 1.5; }
+
+.dialog-backdrop { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 20px; background: rgba(8, 24, 48, .54); backdrop-filter: blur(3px); }
+.assignment-dialog { width: min(100%, 520px); max-height: min(90vh, 720px); overflow-y: auto; background: white; border: 1px solid #e5eaf1; border-radius: 13px; box-shadow: 0 24px 70px rgba(8, 24, 48, .26); animation: dialog-enter .18s ease-out; }
+.assignment-dialog-header { display: flex; align-items: center; gap: 12px; padding: 21px 23px 18px; border-bottom: 1px solid #edf0f4; }
+.assignment-dialog-icon { width: 40px; height: 40px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 10px; color: #1768e5; background: #eaf2ff; }
+.assignment-dialog-header h2 { color: #15243d; font-size: 15px; font-weight: 700; }
+.assignment-dialog-header p { color: #8490a2; font-size: 10.5px; margin-top: 4px; }
+.dialog-close { width: 30px; height: 30px; margin-left: auto; border-radius: 7px; color: #77869a; font-size: 23px; line-height: 1; }
+.dialog-close:hover { color: #293a52; background: #f3f6f9; }
+.assignment-dialog-body { display: grid; gap: 17px; padding: 21px 23px; }
+.assignment-dialog-body .field select, .assignment-dialog-body .field textarea { font-size: 11px; }
+.assignment-help { display: block; margin-top: 7px; color: #a16b20; font-size: 9.5px; }
+.assignment-dialog-footer { display: flex; justify-content: flex-end; gap: 9px; padding: 14px 23px 20px; border-top: 1px solid #edf0f4; }
+.assignment-notice { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 11px 18px; color: #11815a; background: #eaf8f1; font-size: 10.5px; }
+.assignment-notice button { color: #11815a; font-size: 17px; }
+.detail-notice { margin-bottom: 14px; border: 1px solid #d5efdf; border-radius: 8px; }
+.equipment-edit-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.equipment-edit-full { grid-column: 1 / -1; }
+.loading-panel { padding: 28px; color: #6f7d91; font-size: 12px; }
+@keyframes dialog-enter { from { opacity: 0; transform: translateY(6px) scale(.99); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@media (max-width: 560px) {
+  .dialog-backdrop { padding: 12px; }
+  .assignment-dialog-header, .assignment-dialog-body { padding-inline: 17px; }
+  .assignment-dialog-footer { padding-inline: 17px; flex-wrap: wrap; }
+  .assignment-dialog-footer .btn { flex: 1; }
+  .equipment-edit-grid { grid-template-columns: 1fr; }
+  .equipment-edit-full { grid-column: auto; }
+}
