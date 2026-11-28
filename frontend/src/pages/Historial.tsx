@@ -1,9 +1,15 @@
+import { useEffect, useState } from 'react'
 import { Icon } from '../components/Icon'
 import { Button } from '../components/Button'
 import { getTimeline } from '../services/equipmentService'
+import type { TimelineEvent } from '../types'
 
 export default function Historial() {
-  const timeline = getTimeline()
+  const [timeline, setTimeline] = useState<TimelineEvent[]>([])
+
+  useEffect(() => {
+    void getTimeline().then(setTimeline)
+  }, [])
 
   return (
     <section className="panel history-panel">

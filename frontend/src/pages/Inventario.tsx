@@ -6,7 +6,7 @@ import { EquipmentTable } from '../components/EquipmentTable'
 import { useEquipment } from '../context/EquipmentContext'
 
 export default function Inventario() {
-  const { equipment, removeEquipment } = useEquipment()
+  const { equipment, removeEquipment, loading, error, refresh } = useEquipment()
   const navigate = useNavigate()
   const [query, setQuery] = useState('')
   const [status, setStatus] = useState('Todos los estados')
@@ -21,6 +21,8 @@ export default function Inventario() {
 
   return (
     <section className="panel inventory-panel">
+      {loading && <div className="table-footer"><span>Cargando inventario...</span></div>}
+      {error && <div className="table-footer"><span>{error}</span><button className="link-button" onClick={() => void refresh()}>Reintentar</button></div>}
       <div className="inventory-toolbar">
         <div className="table-search">
           <Icon name="search" size={18} />
@@ -41,7 +43,7 @@ export default function Inventario() {
       </div>
       <EquipmentTable equipment={filtered} showDetail={(item) => navigate(`/inventario/${item.id}`)} deleteItem={removeEquipment} />
       <div className="table-footer">
-        <span>Mostrando <strong>{filtered.length}</strong> de <strong>248</strong> equipos</span>
+        <span>Mostrando <strong>{filtered.length}</strong> de <strong>{equipment.length}</strong> equipos</span>
         <div className="pagination">
           <button disabled>‹</button><button className="current">1</button><button>2</button><button>3</button><span>…</span><button>25</button><button>›</button>
         </div>

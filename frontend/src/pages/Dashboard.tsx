@@ -18,11 +18,16 @@ export default function Dashboard() {
   const { equipment } = useEquipment()
   const navigate = useNavigate()
 
+  const total = equipment.length
+  const activos = equipment.filter((item) => item.status === 'Activo').length
+  const disponibles = equipment.filter((item) => item.status === 'Disponible').length
+  const mantenimiento = equipment.filter((item) => item.status === 'Mantenimiento').length
+  const baja = equipment.filter((item) => item.status === 'Baja').length
   const cards: { label: string; value: string; change: string; icon: IconName; color: string }[] = [
-    { label: 'Total de equipos', value: '248', change: '+12 este mes', icon: 'monitor', color: 'blue' },
-    { label: 'Equipos activos', value: '196', change: '79% del inventario', icon: 'check', color: 'green' },
-    { label: 'En mantenimiento', value: '18', change: '4 requieren atención', icon: 'tool', color: 'orange' },
-    { label: 'Dados de baja', value: '34', change: '3 este mes', icon: 'archive', color: 'gray' },
+    { label: 'Total de equipos', value: String(total), change: 'Inventario registrado', icon: 'monitor', color: 'blue' },
+    { label: 'Equipos activos', value: String(activos), change: `${total ? Math.round(activos * 100 / total) : 0}% del inventario`, icon: 'check', color: 'green' },
+    { label: 'En mantenimiento', value: String(mantenimiento), change: 'Equipos en taller', icon: 'tool', color: 'orange' },
+    { label: 'Dados de baja', value: String(baja), change: 'Bajas registradas', icon: 'archive', color: 'gray' },
   ]
 
   return (
@@ -45,13 +50,13 @@ export default function Dashboard() {
           </div>
           <div className="chart-wrap">
             <div className="donut">
-              <div className="donut-center"><strong>248</strong><span>Equipos</span></div>
+              <div className="donut-center"><strong>{total}</strong><span>Equipos</span></div>
             </div>
             <div className="chart-legend">
-              <div><i className="legend-dot active" /><span>Activos</span><strong>196</strong><small>79%</small></div>
-              <div><i className="legend-dot available" /><span>Disponibles</span><strong>18</strong><small>7%</small></div>
-              <div><i className="legend-dot maintenance" /><span>Mantenimiento</span><strong>18</strong><small>7%</small></div>
-              <div><i className="legend-dot retired" /><span>Dados de baja</span><strong>16</strong><small>7%</small></div>
+              <div><i className="legend-dot active" /><span>Activos</span><strong>{activos}</strong><small>{total ? `${Math.round(activos * 100 / total)}%` : '0%'}</small></div>
+              <div><i className="legend-dot available" /><span>Disponibles</span><strong>{disponibles}</strong><small>{total ? `${Math.round(disponibles * 100 / total)}%` : '0%'}</small></div>
+              <div><i className="legend-dot maintenance" /><span>Mantenimiento</span><strong>{mantenimiento}</strong><small>{total ? `${Math.round(mantenimiento * 100 / total)}%` : '0%'}</small></div>
+              <div><i className="legend-dot retired" /><span>Dados de baja</span><strong>{baja}</strong><small>{total ? `${Math.round(baja * 100 / total)}%` : '0%'}</small></div>
             </div>
           </div>
         </article>
