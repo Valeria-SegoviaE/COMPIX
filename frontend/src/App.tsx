@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { EquipmentProvider } from './context/EquipmentContext'
 import { Layout } from './components/Layout'
-import { getSession } from './services/auth'
+import { getSession, isAdminSession } from './services/auth'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Inventario from './pages/Inventario'
@@ -13,6 +13,10 @@ import Configuracion from './pages/Configuracion'
 
 function Protected({ children }: { children: React.ReactElement }) {
   return getSession() ? children : <Navigate to="/login" replace />
+}
+
+function AdminOnly({ children }: { children: React.ReactElement }) {
+  return isAdminSession() ? children : <Navigate to="/" replace />
 }
 
 export default function App() {
@@ -27,7 +31,7 @@ export default function App() {
           <Route path="/inventario/:id" element={<DetalleEquipo />} />
           <Route path="/asignaciones" element={<Asignaciones />} />
           <Route path="/historial" element={<Historial />} />
-          <Route path="/configuracion" element={<Configuracion />} />
+          <Route path="/configuracion" element={<AdminOnly><Configuracion /></AdminOnly>} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

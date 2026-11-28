@@ -4,7 +4,7 @@ const KEY = 'compix_session'
 
 export interface Session {
   name: string
-  role: string
+  role: 'Admin' | 'Soporte'
   initials: string
 }
 
@@ -29,7 +29,7 @@ export async function login(email: string, password: string): Promise<Session> {
   const user = response.usuario
   const session: Session = {
     name: user.nombreCompleto,
-    role: user.rol === 'Admin' ? 'Administrador TI' : 'Técnico de soporte',
+    role: user.rol === 'Admin' ? 'Admin' : 'Soporte',
     initials: user.nombreCompleto.split(/\s+/).map((part) => part[0]).slice(0, 2).join('').toUpperCase(),
   }
   try { localStorage.setItem(KEY, JSON.stringify(session)) } catch { /* sin storage */ }
@@ -44,8 +44,26 @@ export function logout() {
 export function getSession(): Session | null {
   try {
     const raw = localStorage.getItem(KEY)
-    return raw ? (JSON.parse(raw) as Session) : null
+    if (!raw) return null
+
+    const stored = JSON.parse(raw) as {
+      name?: unknown
+      role?: unknown
+      initials?: unknown
+    }
+    if (typeof stored.name !== 'string' || typeof stored.initials !== 'string') return null
+
+    const role = stored.role === 'Admin' || stored.role === 'Administrador TI'
+      ? 'Admin'
+      : stored.role === 'Soporte' || stored.role === 'Técnico de soporte'
+        ? 'Soporte'
+        : null
+    return role ? { name: stored.name, role, initials: stored.initials } : null
   } catch {
     return null
   }
+}
+
+export function isAdminSession(): boolean {
+  return getSession()?.role === 'Admin'
 }

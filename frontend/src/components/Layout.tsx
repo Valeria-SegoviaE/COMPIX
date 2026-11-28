@@ -70,7 +70,7 @@ export function Layout() {
         </div>
         <nav className="main-nav">
           <p>MENÚ PRINCIPAL</p>
-          {navItems.map((item) => (
+          {navItems.filter((item) => item.to !== '/configuracion' || session?.role === 'Admin').map((item) => (
             <NavLink key={item.to} to={item.to} end={item.to === '/'} className={({ isActive }) => (isActive ? 'active' : '')}>
               <Icon name={item.icon} /><span>{item.label}</span>
             </NavLink>
@@ -83,7 +83,7 @@ export function Layout() {
         </div>
         <div className="sidebar-profile">
           <div className="avatar">{session?.initials ?? 'CG'}</div>
-          <div><strong>{session?.name ?? 'Carlos Gómez'}</strong><span>{session?.role ?? 'Administrador TI'}</span></div>
+          <div><strong>{session?.name ?? 'Carlos Gómez'}</strong><span>{session?.role === 'Admin' ? 'Administrador TI' : 'Técnico de soporte'}</span></div>
           <button aria-label="Cerrar sesión" onClick={handleLogout}><Icon name="logout" size={18} /></button>
         </div>
       </aside>
