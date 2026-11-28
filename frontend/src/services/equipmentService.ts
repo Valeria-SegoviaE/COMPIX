@@ -149,11 +149,125 @@ export async function deleteEquipment(id: number): Promise<void> {
   await apiRequest<undefined>(`/api/equipos/${id}`, { method: 'DELETE' })
 }
 
-// Endpoints for assignments and history are not exposed by the current backend.
+interface AssignmentApi {
+  idAsignacion: number
+  idEquipo: number
+  codigoInventario: string
+  numeroSerie: string
+  marca: string
+  modelo: string
+  idEmpleado: number
+  nombreEmpleado: string
+  departamento?: string | null
+  fechaAsignacion: string
+  fechaDevolucion?: string | null
+}
+
+interface HistoryApi {
+  idMovimiento: number
+  idEquipo: number
+  codigoInventario: string
+  tipoMovimiento: string
+  estadoAnterior?: string | null
+  estadoNuevo?: string | null
+  descripcionDetalle: string
+  fechaMovimiento: string
+  nombreUsuarioResponsable: string
+}
+
+interface EmployeeDepartmentApi {
+  idEmpleado: number
+  departamento?: string | null
+}
+
+const formatDate = (date: string) => new Date(date).toLocaleDateString('es-MX', {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric',
+})
+
 export async function getAssignments(): Promise<Assignment[]> {
-  return []
+  const [rows, employees] = await Promise.all([
+    apiRequest<AssignmentApi[]>('/api/asignaciones'),
+    apiRequest<EmployeeDepartmentApi[]>('/api/empleados'),
+  ])
+  const departments = new Map((employees ?? []).map((employee) => [employee.idEmpleado, employee.departamento]))
+  return (rows ?? []).map((row) => ({
+    idAssignment: row.idAsignacion,
+    equipmentNumericId: row.idEquipo,
+    employeeNumericId: row.idEmpleado,
+    employee: row.nombreEmpleado,
+    department: row.departamento || departments.get(row.idEmpleado) || '—',
+    equipmentName: `${row.marca} ${row.modelo}`,
+    equipmentId: row.codigoInventario,
+    serial: row.numeroSerie,
+    date: formatDate(row.fechaAsignacion),
+    status: row.fechaDevolucion ? 'Devuelta' : 'Activa',
+  }))
+}
+
+export async function createAssignment(
+  idEquipo: number,
+  idEmpleado: number,
+  observacionesEntrega?: string,
+): Promise<void> {
+  await apiRequest('/api/asignaciones/asignar', {
+    method: 'POST',
+    body: JSON.stringify({ idEquipo, idEmpleado, observacionesEntrega: observacionesEntrega || null }),
+  })
+}
+
+export async function reassignEquipment(
+  idEquipo: number,
+  idEmpleadoNuevo: number,
+  observacionesEntrega?: string,
+): Promise<void> {
+  await apiRequest('/api/asignaciones/reasignar', {
+    method: 'POST',
+    body: JSON.stringify({
+      idEquipo,
+      idEmpleadoNuevo,
+      observacionesEntrega: observacionesEntrega || null,
+    }),
+  })
+}
+
+export async function returnAssignment(idAsignacion: number, observacionesDevolucion?: string): Promise<void> {
+  await apiRequest(`/api/asignaciones/${idAsignacion}/devolver`, {
+    method: 'PUT',
+    body: JSON.stringify({ observacionesDevolucion: observacionesDevolucion || null }),
+  })
 }
 
 export async function getTimeline(): Promise<TimelineEvent[]> {
-  return []
+  const rows = await apiRequest<HistoryApi[]>('/api/historial')
+  return (rows ?? []).map((row) => {
+    const type = row.tipoMovimiento
+    const icon: TimelineEvent['icon'] = type.toLowerCase().includes('asign')
+      ? 'users'
+      : type.toLowerCase().includes('mantenimiento')
+        ? 'tool'
+        : type.toLowerCase().includes('registro')
+          ? 'plus'
+          : type.toLowerCase().includes('baja')
+            ? 'archive'
+            : 'edit'
+    const movementDate = new Date(row.fechaMovimiento)
+    return {
+      id: row.idMovimiento,
+      equipmentNumericId: row.idEquipo,
+      occurredAt: movementDate.toISOString(),
+      date: movementDate.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' }),
+      time: movementDate.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }),
+      icon,
+      color: icon === 'users' ? 'blue' : icon === 'tool' ? 'orange' : icon === 'plus' ? 'green' : 'purple',
+      type,
+      equipment: row.codigoInventario,
+      responsible: row.nombreUsuarioResponsable,
+      title: row.estadoAnterior || row.estadoNuevo
+        ? `Estado: ${row.estadoAnterior || '—'} → ${row.estadoNuevo || '—'}`
+        : type,
+      description: row.descripcionDetalle,
+    }
+  })
 }

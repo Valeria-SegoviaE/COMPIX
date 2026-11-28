@@ -35,7 +35,7 @@
 .sidebar-support { margin: auto 2px 15px; padding: 15px; border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.045); border-radius: 10px; }
 .sidebar-support span { font-size: 12px; font-weight: 700; }
 .sidebar-support p { font-size: 10.5px; color: #91a4bf; margin: 3px 0 9px; }
-.sidebar-support button { color: #6eafff; font-size: 10.5px; font-weight: 600; display: flex; align-items: center; gap: 2px; }
+.sidebar-support button, .sidebar-support a { color: #6eafff; font-size: 10.5px; font-weight: 600; display: flex; align-items: center; gap: 2px; text-decoration: none; }
 .sidebar-profile { padding: 15px 4px 0; border-top: 1px solid rgba(255,255,255,.09); display: flex; align-items: center; gap: 9px; }
 .sidebar-profile > div:nth-child(2) { min-width: 0; flex: 1; }
 .sidebar-profile strong { display: block; font-size: 11.5px; }
