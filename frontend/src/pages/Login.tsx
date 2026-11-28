@@ -13,10 +13,24 @@ export default function Login() {
 
   if (getSession()) return <Navigate to="/" replace />
 
-  const submit = (e: FormEvent) => {
+  const [submitting, setSubmitting] = useState(false)
+
+  const submit = async (e: FormEvent) => {
     e.preventDefault()
-    if (login(email, password)) navigate('/')
-    else setError('Ingresa tu correo y contraseña.')
+    setError('')
+    if (!email.trim() || !password) {
+      setError('Ingresa tu correo y contraseña.')
+      return
+    }
+    setSubmitting(true)
+    try {
+      await login(email, password)
+      navigate('/')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'No fue posible iniciar sesión.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -33,8 +47,7 @@ export default function Login() {
           <Field label="Contraseña" required type="password" placeholder="••••••••" value={password} onChange={setPassword} />
         </div>
         {error && <div className="login-error">{error}</div>}
-        <Button type="submit" icon="lock">Entrar</Button>
-        <small className="login-note">Inicio de sesión de demostración: cualquier correo y contraseña funcionan hasta conectar la API.</small>
+        <Button type="submit" icon="lock">{submitting ? 'Entrando...' : 'Entrar'}</Button>
       </form>
     </div>
   )

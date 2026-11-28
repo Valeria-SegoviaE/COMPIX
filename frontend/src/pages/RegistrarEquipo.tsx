@@ -4,31 +4,29 @@ import { Icon } from '../components/Icon'
 import { Button } from '../components/Button'
 import { Field, SelectField } from '../components/FormFields'
 import { useEquipment } from '../context/EquipmentContext'
+import { createEquipment } from '../services/equipmentService'
 
 export default function RegistrarEquipo() {
   const { addEquipment } = useEquipment()
   const navigate = useNavigate()
   const [form, setForm] = useState({ id: '', name: '', type: '', brand: '', model: '', serial: '', processor: '', ram: '', storage: '', notes: '' })
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
   const change = (key: string, value: string) => setForm((prev) => ({ ...prev, [key]: value }))
 
-  const submit = (e: FormEvent) => {
+  const submit = async (e: FormEvent) => {
     e.preventDefault()
-    addEquipment({
-      id: form.id || 'CMP-2025-049',
-      name: form.name || 'Equipo nuevo',
-      type: form.type || 'Laptop',
-      brand: form.brand || 'Sin especificar',
-      model: form.model || 'Sin especificar',
-      serial: form.serial || 'Sin especificar',
-      employee: 'Sin asignar',
-      department: '—',
-      status: 'Disponible',
-      date: new Date().toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' }),
-      processor: form.processor || 'Sin especificar',
-      ram: form.ram || 'Sin especificar',
-      storage: form.storage || 'Sin especificar',
-    })
-    navigate('/inventario')
+    setSaving(true)
+    setError('')
+    try {
+      const created = await createEquipment(form)
+      await addEquipment(created)
+      navigate('/inventario')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'No fue posible guardar el equipo.')
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
@@ -59,8 +57,9 @@ export default function RegistrarEquipo() {
       </section>
       <div className="form-actions">
         <Button variant="secondary" onClick={() => navigate('/inventario')}>Cancelar</Button>
-        <Button type="submit" icon="check">Guardar equipo</Button>
+        <Button type="submit" icon="check">{saving ? 'Guardando...' : 'Guardar equipo'}</Button>
       </div>
+      {error && <div className="login-error">{error}</div>}
     </form>
   )
 }
