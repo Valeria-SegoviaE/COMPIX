@@ -8,10 +8,11 @@ interface Props {
   equipment: Equipment[]
   compact?: boolean
   showDetail: (item: Equipment) => void
-  deleteItem?: (id: string) => void
+  editItem?: (item: Equipment) => void
+  deleteItem?: (id: string) => void | Promise<void>
 }
 
-export function EquipmentTable({ equipment, compact = false, showDetail, deleteItem }: Props) {
+export function EquipmentTable({ equipment, compact = false, showDetail, editItem, deleteItem }: Props) {
   return (
     <div className="table-scroll">
       <table>
@@ -44,8 +45,8 @@ export function EquipmentTable({ equipment, compact = false, showDetail, deleteI
               <td>
                 <div className="row-actions">
                   <button title="Visualizar" onClick={() => showDetail(item)}><Icon name="eye" size={17} /></button>
-                  <button title="Editar"><Icon name="edit" size={17} /></button>
-                  {deleteItem && <button title="Eliminar" className="delete" onClick={() => deleteItem(item.id)}><Icon name="trash" size={17} /></button>}
+                  {editItem && <button title="Editar" onClick={() => editItem(item)}><Icon name="edit" size={17} /></button>}
+                  {deleteItem && <button title="Dar de baja" className="delete" onClick={() => void deleteItem(item.id)}><Icon name="trash" size={17} /></button>}
                 </div>
               </td>
             </tr>

@@ -36,7 +36,7 @@ export default function RegistrarEquipo() {
         <div className="form-grid">
           <Field label="Número de inventario" required placeholder="Ej. CMP-2025-049" value={form.id} onChange={(v) => change('id', v)} />
           <Field label="Nombre del equipo" required placeholder="Ej. Laptop Ventas 13" value={form.name} onChange={(v) => change('name', v)} />
-          <SelectField label="Tipo de equipo" required value={form.type} onChange={(v) => change('type', v)} options={['Seleccionar tipo', 'Laptop', 'Escritorio', 'All-in-One', 'Servidor']} />
+          <SelectField label="Tipo de equipo" required value={form.type} onChange={(v) => change('type', v)} options={['Seleccionar tipo', 'Laptop', 'Escritorio', 'Workstation', 'All-in-One']} />
           <Field label="Número de serie" required placeholder="Ej. DL5K91P2" value={form.serial} onChange={(v) => change('serial', v)} />
           <Field label="Marca" required placeholder="Ej. Dell" value={form.brand} onChange={(v) => change('brand', v)} />
           <Field label="Modelo" required placeholder="Ej. Latitude 5450" value={form.model} onChange={(v) => change('model', v)} />
