@@ -7,6 +7,7 @@ export type IconName =
 export type EquipmentStatus = 'Activo' | 'Disponible' | 'Mantenimiento' | 'Baja'
 
 export interface Equipment {
+  numericId?: number
   id: string
   name: string
   type: string
@@ -20,6 +21,9 @@ export interface Equipment {
   processor: string
   ram: string
   storage: string
+  operatingSystem?: string
+  acquisitionDate?: string
+  notes?: string
 }
 
 export interface Assignment {
